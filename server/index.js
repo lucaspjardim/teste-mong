@@ -14,7 +14,7 @@ mongoose.connect(process.env.MONGODB_CONNECT_URI, {
 }).then(() => console.log('Conectado ao MongoDB'))
   .catch(err => console.error('Erro ao conectar ao MongoDB', err));
 
-// Use as rotas existentes
+// Rotas de Matches (Futsal e Volei)
 const matchesRoutes = require('./routes/matches');
 app.use('/api', matchesRoutes);
 
@@ -22,6 +22,11 @@ app.use('/api', matchesRoutes);
 const teamRoutes = require('./routes/teamRoutes');
 app.use('/api', teamRoutes);
 
+// Rotas para partidas de vôlei
+
+// Rotas para gestão de placares
+const scoresRoutes = require('./routes/scores');
+app.use('/api', scoresRoutes);
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Servidor rodando na porta ${port}`));
