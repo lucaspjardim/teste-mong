@@ -7,7 +7,14 @@ require('dotenv').config();
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+
+// Configuração do CORS para permitir a origem específica
+const corsOptions = {
+  origin: 'https://olimpiadas-tech.vercel.app', // URL do seu frontend
+  optionsSuccessStatus: 200 // Para navegadores antigos que requerem um status 204
+};
+
+app.use(cors(corsOptions));
 
 // Conexão com MongoDB
 mongoose.connect(process.env.MONGODB_CONNECT_URI, {
@@ -45,7 +52,7 @@ function authMiddleware(req, res, next) {
     return res.status(401).json({ message: 'Token não fornecido' });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+  jwt.verify(token.split(' ')[1], process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       return res.status(401).json({ message: 'Token inválido' });
     }
@@ -60,8 +67,5 @@ app.get('/api/admin', authMiddleware, (req, res) => {
   res.status(200).json({ message: 'Bem-vindo ao AdminPanel' });
 });
 
-// Exportando o const port = process.env.PORT || 5000;
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port} no ambiente ${process.env.NODE_ENV}`);
-});
+// Exportando o app para uso pela Vercel
+module.exports = app;
