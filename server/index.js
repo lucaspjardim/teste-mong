@@ -60,5 +60,8 @@ app.get('/api/admin', authMiddleware, (req, res) => {
   res.status(200).json({ message: 'Bem-vindo ao AdminPanel' });
 });
 
-// Exportando o app para uso pela Vercel
-module.exports = app;
+// Exportando o const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`Servidor rodando na porta ${port} no ambiente ${process.env.NODE_ENV}`);
+});
