@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const scoreSchema = new mongoose.Schema({
   team: { type: String, required: true },
   year: { type: String, required: true },
@@ -5,11 +7,7 @@ const scoreSchema = new mongoose.Schema({
   position: { type: Number, required: true },
   points: { type: Number, required: true },
 }, {
-  timestamps: true,
-  versionKey: false
+  timestamps: true, // Adiciona createdAt e updatedAt automaticamente
 });
 
-// Índice único para evitar duplicações
-scoreSchema.index({ team: 1, year: 1, modality: 1 }, { unique: true });
-
-const Score = mongoose.model('Score', scoreSchema);
+module.exports = mongoose.model('Score', scoreSchema);
