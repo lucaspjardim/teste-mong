@@ -56,11 +56,18 @@ router.get('/teams', async (req, res) => {
   }
 });
 
-// Rota para buscar scores por ano e modalidade
+// Rota para buscar scores por ano, modalidade e time
 router.get('/scores', async (req, res) => {
-  const { year, modality } = req.query;
+  const { year, modality, team } = req.query; // Inclui o parâmetro team
+
+  // Constrói o objeto de filtro dinâmico
+  let filter = {};
+  if (year) filter.year = year;
+  if (modality) filter.modality = modality;
+  if (team) filter.team = team; // Adiciona o filtro de team se fornecido
+
   try {
-    const scores = await Score.find({ year, modality });
+    const scores = await Score.find(filter); // Filtra com base nos parâmetros fornecidos
     res.status(200).json(scores);
   } catch (error) {
     res.status(500).json({ error: 'Erro ao buscar as posições dos scores' });
