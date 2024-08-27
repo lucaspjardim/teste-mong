@@ -49,7 +49,9 @@ router.post('/scores', async (req, res) => {
         totalScoreA += parseFloat(match.scoreA) || 0;
       });
 
-      await Team.findOneAndUpdate(
+      console.log(`Total scoreA for ${team} in ${modality}: `, totalScoreA);
+
+      const updateResult = await Team.findOneAndUpdate(
         { teamId: team, year },
         {
           $inc: {
@@ -58,10 +60,13 @@ router.post('/scores', async (req, res) => {
         },
         { new: true }
       );
+
+      console.log(`Updated totalPoints for ${team} in ${year} by adding ${totalScoreA}: `, updateResult);
     }
 
     res.status(200).json({ message: 'Score and total points updated successfully!' });
   } catch (error) {
+    console.error('Error updating score and total points:', error);
     res.status(500).json({ error: 'Error updating score and total points' });
   }
 });
