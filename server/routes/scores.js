@@ -2,9 +2,10 @@
 const express = require('express');
 const Score = require('../models/Score');
 const Team = require('../models/Team');
+const Match = require('../models/Match'); // Certifique-se de que o modelo Match esteja importado
 const router = express.Router();
 
-// Rota para salvar scores
+// Rota para salvar scores e atualizar os pontos totais
 router.post('/scores', async (req, res) => {
   const { team, year, modality, position } = req.body;
 
@@ -39,9 +40,29 @@ router.post('/scores', async (req, res) => {
       { upsert: true, new: true }
     );
 
-    res.status(200).json({ message: 'Score updated successfully!' });
+    // Verifica se a modalidade é Atletismo ou Desfile e atualiza o totalPoints com o scoreA
+    if (['atletismo_masculino', 'atletismo_feminino', 'desfile'].includes(modality)) {
+      const matches = await Match.find({ year, modality, teamA: team });
+      let totalScoreA = 0;
+
+      matches.forEach(match => {
+        totalScoreA += parseFloat(match.scoreA) || 0;
+      });
+
+      await Team.findOneAndUpdate(
+        { teamId: team, year },
+        {
+          $inc: {
+            totalPoints: totalScoreA  // Incrementa os pontos totais com scoreA do Atletismo ou Desfile
+          }
+        },
+        { new: true }
+      );
+    }
+
+    res.status(200).json({ message: 'Score and total points updated successfully!' });
   } catch (error) {
-    res.status(500).json({ error: 'Error updating score' });
+    res.status(500).json({ error: 'Error updating score and total points' });
   }
 });
 
