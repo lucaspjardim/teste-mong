@@ -3,20 +3,25 @@ const express = require('express');
 const Match = require('../models/Match');
 const router = express.Router();
 
-// Rota para buscar todas as partidas por ano e modalidade
+// Rota para buscar todas as partidas por ano, modalidade e teamA
 router.get('/matches', async (req, res) => {
   try {
-    const { year, modality } = req.query;
+    const { year, modality, teamA } = req.query;
     let query = {};
 
     // Adiciona modality ao filtro, se fornecido
     if (modality) {
-      query.modality = modality;
+      query.modality = decodeURIComponent(modality.trim());
     }
 
     // Adiciona year ao filtro, se fornecido
     if (year) {
-      query.year = year;
+      query.year = decodeURIComponent(year.trim());
+    }
+
+    // Adiciona teamA ao filtro, se fornecido
+    if (teamA) {
+      query.teamA = decodeURIComponent(teamA.trim());
     }
 
     // Executa a consulta com os filtros definidos
@@ -24,7 +29,7 @@ router.get('/matches', async (req, res) => {
 
     // Verifica se algum jogo foi encontrado
     if (matches.length === 0) {
-      return res.status(404).json({ message: `Nenhum jogo encontrado para ${year}` });
+      return res.status(404).json({ message: `Nenhum jogo encontrado para os filtros aplicados` });
     }
 
     // Retorna os jogos encontrados
@@ -47,4 +52,3 @@ router.put('/matches/:id', async (req, res) => {
 });
    
 module.exports = router;
- 
