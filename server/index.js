@@ -30,6 +30,8 @@ const teamRoutes = require('./routes/teamRoutes');
 app.use('/api', teamRoutes);
 const scoresRoutes = require('./routes/scores');
 app.use('/api', scoresRoutes);
+const updateRoutes = require('./routes/update'); // Nova rota para atualização de pontos
+app.use('/api', updateRoutes);
 
 // Rota de login
 app.post('/api/login', async (req, res) => {
