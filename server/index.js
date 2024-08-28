@@ -15,7 +15,7 @@ app.use(express.json());
 // Configuração do CORS para permitir origens específicas e métodos
 const corsOptions = {
   origin: ['https://olimpiadas-tech.vercel.app'], // Adicione outros domínios aqui, se necessário
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
+  methods: ['GET', 'POST', 'PUT'], // Métodos HTTP permitidos
   allowedHeaders: ['Content-Type', 'Authorization'], // Cabeçalhos permitidos
   optionsSuccessStatus: 200
 };
