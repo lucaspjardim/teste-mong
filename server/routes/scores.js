@@ -9,6 +9,7 @@ const router = express.Router();
 router.post('/scores', async (req, res) => {
   const { team, year, modality, position } = req.body;
 
+  // Pontuações padrão para a maioria das modalidades
   const pointsByPosition = {
     1: 60,
     2: 50,
@@ -21,7 +22,28 @@ router.post('/scores', async (req, res) => {
     9: 10,
   };
 
-  const points = pointsByPosition[position] || 0;
+  // Pontuações especiais para xadrez e tênis de mesa
+  const specialPointsByPosition = {
+    1: 25,
+    2: 15,
+    3: 10,
+    4: 5,
+    5: 0,
+    6: 0,
+    7: 0,
+    8: 0,
+    9: 0,
+  };
+
+  // Verifica se a modalidade é xadrez ou tênis de mesa para aplicar pontuações especiais
+  const isSpecialModality = [
+    'xadrez_masculino', 
+    'xadrez_feminino', 
+    'tenis_de_mesa_masculino', 
+    'tenis_de_mesa_feminino'
+  ].includes(modality);
+
+  const points = isSpecialModality ? (specialPointsByPosition[position] || 0) : (pointsByPosition[position] || 0);
 
   try {
     // Salva o score na coleção de scores
