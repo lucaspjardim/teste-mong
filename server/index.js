@@ -35,13 +35,6 @@ app.use(helmet());
 // Sanitização de dados para prevenir injeção de código
 app.use(mongoSanitize());
 
-// Limitação de requisições para prevenir ataques de força bruta
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 100, // Limite de 100 requisições por IP por `windowMs`
-  message: 'Muitas requisições deste IP, tente novamente mais tarde.'
-});
-app.use('/api/', limiter);
 
 // Log de requisições HTTP com Morgan
 app.use(morgan('combined')); // Log detalhado
