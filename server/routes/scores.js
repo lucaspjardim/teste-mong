@@ -1,3 +1,4 @@
+// routes/scores.js
 const express = require('express');
 const Score = require('../models/Score');
 const Team = require('../models/Team');
@@ -45,12 +46,6 @@ router.post('/scores', async (req, res) => {
   const points = isSpecialModality ? (specialPointsByPosition[position] || 0) : (pointsByPosition[position] || 0);
 
   try {
-    // Verifica se o score já existe para evitar duplicados
-    const existingScore = await Score.findOne({ team, year, modality, position });
-    if (existingScore) {
-      return res.status(400).json({ message: 'Score já registrado para esta modalidade, posição e ano' });
-    }
-
     // Salva o score na coleção de scores
     const score = new Score({ team, year, modality, position, points });
     await score.save();
@@ -91,13 +86,40 @@ router.post('/scores', async (req, res) => {
       console.log(`Updated totalPoints for ${team} in ${year} by adding ${totalScoreA}: `, updateResult);
     }
 
-    res.status(200).json({ message: 'Score e pontos totais atualizados com sucesso!' });
+    res.status(200).json({ message: 'Score and total points updated successfully!' });
   } catch (error) {
-    console.error('Erro ao atualizar score e pontos totais:', error);
-    res.status(500).json({ error: 'Erro ao atualizar score e pontos totais' });
+    console.error('Error updating score and total points:', error);
+    res.status(500).json({ error: 'Error updating score and total points' });
   }
 });
 
-// Outras rotas...
+// Rota para buscar turmas pelo ano
+router.get('/teams', async (req, res) => {
+  const { year } = req.query;
+  try {
+    const teams = await Team.find({ year });
+    res.status(200).json(teams);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar as turmas' });
+  }
+});
+
+// Rota para buscar scores por ano, modalidade e time
+router.get('/scores', async (req, res) => {
+  const { year, modality, team } = req.query; // Inclui o parâmetro team
+
+  // Constrói o objeto de filtro dinâmico
+  let filter = {};
+  if (year) filter.year = year;
+  if (modality) filter.modality = modality;
+  if (team) filter.team = team; // Adiciona o filtro de team se fornecido
+
+  try {
+    const scores = await Score.find(filter); // Filtra com base nos parâmetros fornecidos
+    res.status(200).json(scores);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar as posições dos scores' });
+  }
+});
 
 module.exports = router;
