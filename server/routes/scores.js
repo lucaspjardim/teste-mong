@@ -46,6 +46,14 @@ router.post('/scores', async (req, res) => {
   const points = isSpecialModality ? (specialPointsByPosition[position] || 0) : (pointsByPosition[position] || 0);
 
   try {
+    // Verifica se já existe um score para o mesmo time, ano e modalidade
+    const existingScore = await Score.findOne({ team, year, modality });
+
+    if (existingScore) {
+      // Se já existir, envie uma resposta informando que o score já foi registrado
+      return res.status(400).json({ error: 'Este score já foi registrado. Atualize o placar em vez de adicionar um novo.' });
+    }
+
     // Salva o score na coleção de scores
     const score = new Score({ team, year, modality, position, points });
     await score.save();
