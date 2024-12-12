@@ -14,7 +14,7 @@ app.use(express.json());
 
 // Configuração do CORS para permitir origens específicas e métodos
 const corsOptions = {
-  origin: ['https://jogos-cf.vercel.app'], // Adicione outros domínios aqui, se necessário
+  origin: ['https://jogos-cf.vercel.app', 'http://localhost:3000'], // Adicione outros domínios aqui, se necessário
   methods: ['GET', 'POST', 'PUT'], // Métodos HTTP permitidos
   allowedHeaders: ['Content-Type', 'Authorization'], // Cabeçalhos permitidos
   optionsSuccessStatus: 200
